@@ -4,9 +4,6 @@ import Book from './Book';
 
 class Search extends React.Component {
     render() {
-        if(this.props.searchResults.length === 0) {
-            
-        }
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -27,7 +24,7 @@ class Search extends React.Component {
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-                        {!(this.props.searchResults.length === 0) && (this.props.searchResults).map((book) => (<li key={book.id}><Book book={book}></Book></li>))}
+                        {!(this.props.searchResults.length === 0) && (this.props.searchResults).map((book) => (<li key={book.id}><Book book={book} moveBook={this.props.moveBook}></Book></li>))}
                     </ol>
                 </div>
             </div >

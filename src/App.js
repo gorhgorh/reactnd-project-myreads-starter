@@ -8,29 +8,30 @@ import { Routes, Route } from "react-router-dom"
 
 class BooksApp extends React.Component {
   state = {
-    books: {},
+    // id and mark types of marked books
+    myBooks: {},
     searchResults: [],
-    searchInput: ""
   }
 
   searchBooks = (input) => {
     BooksAPI.search(input)
   }
 
+  // checkempty input and api response before updating ui
   updateSearch = (e) => {
     const input = e.target.value
-    if(!(input === '')){
+    if (!(input === '')) {
       BooksAPI.search(input).then((books) => {
         console.log(books)
-          if (books.error === undefined) {
-            this.setState(() => ({
-              searchResults: books
-            }))
-          } else {
-            this.setState(() => ({
-              searchResults: []
-            }))
-          }
+        if (books.error === undefined) {
+          this.setState(() => ({
+            searchResults: books
+          }))
+        } else {
+          this.setState(() => ({
+            searchResults: []
+          }))
+        }
       })
     } else {
       this.setState(() => ({
@@ -39,12 +40,25 @@ class BooksApp extends React.Component {
     }
   }
 
+  getBookWithTypes = (myBooks, type) => {
+    return myBooks.filter((book) => (book.type === type))
+  }
+
+  moveBook = (e) => {
+    console.log('select')
+  }
+
   render() {
     return (
       <div className="app">
         <Routes>
-          <Route exact path="/" element={<Bookshelf></Bookshelf>} />
-          <Route exact path="/search" element={<Search updateSearch={this.updateSearch} searchResults={this.state.searchResults} />} />
+          <Route exact path="/" element={
+          <div>
+            <Bookshelf shelfTitle='Reading' myBooks={this.state.myBooks} moveBook={this.moveBook}></Bookshelf>
+            <Bookshelf shelfTitle='Will Read' myBooks={this.state.myBooks} moveBook={this.moveBook}></Bookshelf>
+            <Bookshelf shelfTitle='Read' myBooks={this.state.myBooks} moveBook={this.moveBook}></Bookshelf>
+          </div>} />
+          <Route exact path="/search" element={<Search updateSearch={this.updateSearch} searchResults={this.state.searchResults} moveBook={this.moveBook} />} />
         </Routes>
         <SearchButton />
       </div>
