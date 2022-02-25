@@ -15,7 +15,7 @@ class Book extends React.Component {
                         <BookSelector moveBook={this.props.moveBook} book={this.props.book} selection={this.props.selection} />
                     </div>
                     <div className="book-title">{this.props.book.title}</div>
-                    <div className="book-authors">{this.props.book.authors}</div>
+                    {this.props.book.authors && <div className="book-authors">{this.props.book.authors.toString()}</div>}
                 </div>
             )
         } else {

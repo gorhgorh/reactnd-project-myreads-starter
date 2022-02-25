@@ -7,29 +7,41 @@ import Search from './components/Search'
 import { Routes, Route } from "react-router-dom"
 
 class BooksApp extends React.Component {
-  state = {
-    // id and mark types of marked books
-    myBooks: [],
-    searchResults: [],
+  constructor() {
+    super();
+    this.state = JSON.parse(window.localStorage.getItem('state')) ||
+    {
+      // id and mark types of marked books
+      myBooks: [],
+      searchResults: [],
+      input: ''
+    }
   }
 
-  // checkempty input and api response before updating ui
+  componentDidUpdate() {
+    window.localStorage.setItem('state', JSON.stringify(this.state));
+  }
+
+  // check empty input and api response before updating ui
   updateSearch = (e) => {
     const input = e.target.value
     if (!(input === '')) {
       BooksAPI.search(input).then((books) => {
         if (books.error === undefined) {
           this.setState((oldState) => ({
+            input: input,
             searchResults: books.map(book => this.getBookFromMyBooks(book, oldState))
           }))
         } else {
           this.setState(() => ({
+            input: input,
             searchResults: []
           }))
         }
       })
     } else {
       this.setState(() => ({
+        input: "",
         searchResults: []
       }))
     }
@@ -38,7 +50,7 @@ class BooksApp extends React.Component {
   getBookFromMyBooks = (book, oldState) => {
     console.log('Checking state')
     const foundInMyBook = oldState.myBooks.find(myBook => myBook.book.id === book.id)
-    console.log(foundInMyBook)     
+    console.log(foundInMyBook)
     return foundInMyBook ? foundInMyBook : { book, selection: "none" }
   }
 
@@ -69,7 +81,7 @@ class BooksApp extends React.Component {
               <Bookshelf shelfTitle='Will Read' books={this.getBooksWithTypes(this.state.myBooks, 'wantToRead')} moveBook={this.moveBook} ></Bookshelf>
               <Bookshelf shelfTitle='Read' books={this.getBooksWithTypes(this.state.myBooks, 'read')} moveBook={this.moveBook} ></Bookshelf>
             </div>} />
-          <Route exact path="/search" element={<Search updateSearch={this.updateSearch} searchResults={this.state.searchResults} moveBook={this.moveBook} />} />
+          <Route exact path="/search" element={<Search input={this.state.input} updateSearch={this.updateSearch} searchResults={this.state.searchResults} moveBook={this.moveBook} />} />
         </Routes>
         <SearchButton />
       </div>
