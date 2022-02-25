@@ -13,18 +13,14 @@ class BooksApp extends React.Component {
     searchResults: [],
   }
 
-  searchBooks = (input) => {
-    BooksAPI.search(input)
-  }
-
   // checkempty input and api response before updating ui
   updateSearch = (e) => {
     const input = e.target.value
     if (!(input === '')) {
       BooksAPI.search(input).then((books) => {
         if (books.error === undefined) {
-          this.setState(() => ({
-            searchResults: books
+          this.setState((oldState) => ({
+            searchResults: books.map(book => this.getBookFromMyBooks(book, oldState))
           }))
         } else {
           this.setState(() => ({
@@ -39,10 +35,16 @@ class BooksApp extends React.Component {
     }
   }
 
+  getBookFromMyBooks = (book, oldState) => {
+    console.log('Checking state')
+    const foundInMyBook = oldState.myBooks.find(myBook => myBook.book.id === book.id)
+    console.log(foundInMyBook)     
+    return foundInMyBook ? foundInMyBook : { book, selection: "none" }
+  }
+
   // filter books with type 
   getBooksWithTypes = (myBooks, type) => {
     const books = myBooks.filter((myBook) => (myBook.selection === type))
-    console.log(books)
     return books
   }
 

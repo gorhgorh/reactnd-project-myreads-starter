@@ -24,7 +24,8 @@ class Search extends React.Component {
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-                        {!(this.props.searchResults.length === 0) && (this.props.searchResults).map((book) => (<li key={book.id}><Book book={book} moveBook={this.props.moveBook}></Book></li>))}
+                        {!(this.props.searchResults.length === 0) && (this.props.searchResults)
+                            .map((book) => (<li key={book.book.id}><Book book={book.book} moveBook={this.props.moveBook} selection={book.selection}></Book></li>))}
                     </ol>
                 </div>
             </div >

@@ -12,7 +12,7 @@ class Book extends React.Component {
                             <div className="book-cover" style={{ width: 128, height: 192, backgroundImage: `url(${this.props.book.imageLinks.smallThumbnail})` }}></div>
                             : <div className="book-cover" style={{ width: 128, height: 192 }}></div>
                         }
-                        <BookSelector moveBook={this.props.moveBook} book={this.props.book} />
+                        <BookSelector moveBook={this.props.moveBook} book={this.props.book} selection={this.props.selection} />
                     </div>
                     <div className="book-title">{this.props.book.title}</div>
                     <div className="book-authors">{this.props.book.authors}</div>
