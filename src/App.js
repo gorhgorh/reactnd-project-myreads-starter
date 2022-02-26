@@ -19,24 +19,24 @@ class BooksApp extends React.Component {
   }
 
   // check empty input and api response before updating ui
-  updateSearch = (e) => {
+  updateSearch = async (e) => {
     const input = e.target.value
     if (!(input === '')) {
       this.setState((oldState) => ({
         input: input,
       }))
-      BooksAPI.search(input).then((books) => {
-        if (books.error === undefined) {
-          this.setState((oldState) => ({
-            searchResults: books
-          }))
-        } else {
-          this.setState(() => ({
-            searchResults: []
-          }))
-        }
-      })
-    } else {
+      const books = await BooksAPI.search(input)
+      if (books.error === undefined) {
+        this.setState((oldState) => ({
+          searchResults: books
+        }))
+      } else {
+        this.setState(() => ({
+          searchResults: []
+        }))
+      }
+    }
+    else {
       this.setState(() => ({
         input: "",
         searchResults: []
@@ -59,10 +59,17 @@ class BooksApp extends React.Component {
     return books
   }
 
-  moveBook = (e, book) => {
+  moveBook = async (e, book) => {
     const selection = e.target.value
-    BooksAPI.update(book, selection)
-    this.getMyBooks()
+    this.updateMyBooks(book, selection)
+    await BooksAPI.update(book, selection)
+  }
+
+  updateMyBooks = (book, selection) => {
+    console.log('updating books')
+    this.setState((oldState) => ({
+      myBooks: [...(oldState.myBooks.filter((myBook) => myBook.id !== book.id)), Object.defineProperty(book, 'shelf', { value: selection })]
+    }))
   }
 
   getShelf = (book) => {
