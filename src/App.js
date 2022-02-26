@@ -9,17 +9,13 @@ import { Routes, Route } from "react-router-dom"
 class BooksApp extends React.Component {
   constructor() {
     super();
-    this.state = JSON.parse(window.localStorage.getItem('state')) ||
-    {
+    this.state = {
       // id and mark types of marked books
       myBooks: [],
       searchResults: [],
       input: ''
     }
-  }
-
-  componentDidUpdate() {
-    window.localStorage.setItem('state', JSON.stringify(this.state));
+    this.getMyBooks()
   }
 
   // check empty input and api response before updating ui
@@ -47,16 +43,18 @@ class BooksApp extends React.Component {
     }
   }
 
-  getBookFromMyBooks = (book, oldState) => {
-    console.log('Checking state')
-    const foundInMyBook = oldState.myBooks.find(myBook => myBook.book.id === book.id)
-    console.log(foundInMyBook)
-    return foundInMyBook ? foundInMyBook : { book, selection: "none" }
+  getMyBooks = () => {
+    BooksAPI.getAll().then((myBooks) => {
+      console.log(myBooks)
+      this.setState((oldState) => ({
+        myBooks: myBooks
+      }))
+    })
   }
 
   // filter books with type 
   getBooksWithTypes = (myBooks, type) => {
-    const books = myBooks.filter((myBook) => (myBook.selection === type))
+    const books = myBooks.filter((myBook) => (myBook.shelf === type))
     return books
   }
 

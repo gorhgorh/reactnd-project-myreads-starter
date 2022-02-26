@@ -11,11 +11,11 @@ class BookSelector extends React.Component {
     render() {
         return (
             <div className="book-shelf-changer">
-                <select form="bookForm" onChange={(e) => this.props.moveBook(e, this.props.book)}>
+                <select form="bookForm" onChange={(e) => this.props.moveBook(e, this.props.book)} defaultValue={this.props.selection} >
                     <option key="move" value="move" disabled>Move to...</option>
                     {
                         this.options
-                            .map((option) => <option key={option.value} value={option.value} selected={(this.props.selection === option.value)}>{option.text}</option>)
+                            .map((option) => <option key={option.value} value={option.value}>{option.text}</option>)
                     }
                 </select>
             </div>
