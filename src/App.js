@@ -22,15 +22,16 @@ class BooksApp extends React.Component {
   updateSearch = (e) => {
     const input = e.target.value
     if (!(input === '')) {
+      this.setState((oldState) => ({
+        input: input,
+      }))
       BooksAPI.search(input).then((books) => {
         if (books.error === undefined) {
           this.setState((oldState) => ({
-            input: input,
-            searchResults: books.map(book => this.getBookFromMyBooks(book, oldState))
+            searchResults: books
           }))
         } else {
           this.setState(() => ({
-            input: input,
             searchResults: []
           }))
         }
@@ -60,13 +61,13 @@ class BooksApp extends React.Component {
 
   moveBook = (e, book) => {
     const selection = e.target.value
-    console.log('Moving Book')
-    console.log(selection)
-    this.setState((oldState) => (
-      {
-        myBooks: (selection !== "none") ? [...(oldState.myBooks.filter(myBook => myBook.book.id !== book.id)), { book, selection }] :
-          oldState.myBooks.filter(myBook => myBook.book.id !== book.id)
-      }))
+    BooksAPI.update(book, selection)
+    this.getMyBooks()
+  }
+
+  getShelf = (book) => {
+    const bookFound = this.state.myBooks.find((myBook) => myBook.id === book.id)
+    return (bookFound) ? bookFound.shelf : "none"
   }
 
   render() {
@@ -79,7 +80,8 @@ class BooksApp extends React.Component {
               <Bookshelf shelfTitle='Will Read' books={this.getBooksWithTypes(this.state.myBooks, 'wantToRead')} moveBook={this.moveBook} ></Bookshelf>
               <Bookshelf shelfTitle='Read' books={this.getBooksWithTypes(this.state.myBooks, 'read')} moveBook={this.moveBook} ></Bookshelf>
             </div>} />
-          <Route exact path="/search" element={<Search input={this.state.input} updateSearch={this.updateSearch} searchResults={this.state.searchResults} moveBook={this.moveBook} />} />
+          <Route exact path="/search" element={
+            <Search input={this.state.input} updateSearch={this.updateSearch} searchResults={this.state.searchResults} moveBook={this.moveBook} getShelf={this.getShelf} />} />
         </Routes>
         <SearchButton />
       </div>

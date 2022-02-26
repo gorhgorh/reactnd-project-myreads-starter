@@ -25,7 +25,7 @@ class Search extends React.Component {
                 <div className="search-books-results">
                     <ol className="books-grid">
                         {!(this.props.searchResults.length === 0) && (this.props.searchResults)
-                            .map((book) => (<li key={book.book.id}><Book book={book.book} moveBook={this.props.moveBook} selection={book.selection}></Book></li>))}
+                            .map((book) => (<li key={book.id}><Book book={book} moveBook={this.props.moveBook} selection={this.props.getShelf(book)}></Book></li>))}
                     </ol>
                 </div>
             </div >
