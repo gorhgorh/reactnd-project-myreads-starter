@@ -13,7 +13,8 @@ class BooksApp extends React.Component {
       // id and mark types of marked books
       myBooks: [],
       searchResults: [],
-      input: ''
+      input: '',
+      hasError: false
     }
     this.getMyBooks()
   }
@@ -47,9 +48,15 @@ class BooksApp extends React.Component {
   getMyBooks = () => {
     BooksAPI.getAll().then((myBooks) => {
       console.log(myBooks)
+      if (!Array.isArray(myBooks) && myBooks.error) {
+        // oppps API error we need to warn the user about it !
+        this.setState((oldState) => ({
+          hasError: true
+        }))
+      } else { 
       this.setState((oldState) => ({
         myBooks: myBooks
-      }))
+      }))}
     })
   }
 
@@ -83,10 +90,19 @@ class BooksApp extends React.Component {
         <Routes>
           <Route exact path="/" element={
             <div>
-              <Bookshelf shelfTitle='Reading' books={this.getBooksWithTypes(this.state.myBooks, 'currentlyReading')} moveBook={this.moveBook} ></Bookshelf>
-              <Bookshelf shelfTitle='Will Read' books={this.getBooksWithTypes(this.state.myBooks, 'wantToRead')} moveBook={this.moveBook} ></Bookshelf>
-              <Bookshelf shelfTitle='Read' books={this.getBooksWithTypes(this.state.myBooks, 'read')} moveBook={this.moveBook} ></Bookshelf>
-            </div>} />
+              {this.state.hasError 
+              ? <div>hooo nooooo error !!!!</div>
+              : <>
+                  <Bookshelf shelfTitle='Reading' books={this.getBooksWithTypes(this.state.myBooks, 'currentlyReading')} moveBook={this.moveBook} ></Bookshelf>
+                  <Bookshelf shelfTitle='Will Read' books={this.getBooksWithTypes(this.state.myBooks, 'wantToRead')} moveBook={this.moveBook} ></Bookshelf>
+                  <Bookshelf shelfTitle='Read' books={this.getBooksWithTypes(this.state.myBooks, 'read')} moveBook={this.moveBook} ></Bookshelf>
+              </>
+              }
+            </div>
+            }
+            
+
+            />
           <Route exact path="/search" element={
             <Search input={this.state.input} updateSearch={this.updateSearch} searchResults={this.state.searchResults} moveBook={this.moveBook} getShelf={this.getShelf} />} />
         </Routes>
